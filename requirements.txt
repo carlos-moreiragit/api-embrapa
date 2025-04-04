@@ -3,5 +3,5 @@ flasgger
 Flask-SQLAlchemy
 flask-jwt-extended
 beautifulsoup4
-
+requests
 
