@@ -1,5 +1,7 @@
 flask
 flasgger
 Flask-SQLAlchemy
-SQLAlchemy
+flask-jwt-extended
+beautifulsoup4
+
 
