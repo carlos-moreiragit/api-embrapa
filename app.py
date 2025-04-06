@@ -1,11 +1,14 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-from models import User, db, Production
+from models import User, db, Content
 from datetime import datetime
 import requests
-from bs4 import BeautifulSoup
+from parser import Parser
 
+API_VERSION = "v1"
+PRODUCTION_OPTION = "02"
+PRODUCTION_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02&ano="
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -13,7 +16,7 @@ swagger = Swagger(app)
 jwt = JWTManager(app)
 db.init_app(app)
 
-@app.route("/register", methods=["POST"])
+@app.route(f"/register/{API_VERSION}", methods=["POST"])
 def register_user():
     """
     Registra um novo usuário.
@@ -47,7 +50,7 @@ def register_user():
     
     return jsonify({"message": "User registered successfully"}), 201
 
-@app.route("/login", methods=["POST"])
+@app.route(f"/login/{API_VERSION}", methods=["POST"])
 def login():
     """
     Faz login do usuário e retorna um JWT.
@@ -77,7 +80,7 @@ def login():
         return jsonify({"access_token": token}), 200
     return jsonify({"error": "Invalid credentials"}), 401
 
-@app.route("/protected", methods=["GET"])
+@app.route(f"/protected/{API_VERSION}", methods=["GET"])
 @jwt_required()
 def protected():
     """
@@ -104,7 +107,7 @@ def protected():
     current_user_id = get_jwt_identity()
     return jsonify({"msg": f"Usuário com ID {current_user_id} acessou a rota protegida"}), 200
 
-@app.route("/production/<int:year>", methods=["GET"])
+@app.route(f"/production/{API_VERSION}/<int:year>", methods=["GET"])
 def production(year):
     """
     Retorna a dados da produção de uvas, vinhos e derivados
@@ -123,42 +126,15 @@ def production(year):
     if 1970 < year > datetime.now().year:
         jsonify({"msg": "Ano inválido"}), 401
 
+    url = f"{PRODUCTION_URL}{year}"
+    parser = Parser(requests.get(url))
+    data = parser.parse()
 
-    URL = f"http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02&ano={year}"
-    print(URL)
-    page = requests.get(URL)
-    soup = BeautifulSoup(page.content, "html.parser")
-    
-    data = []
+    new_content = Content(option=PRODUCTION_OPTION, suboption=None, year=year, content=str(data))
+    db.session.add(new_content)
+    db.session.commit()
 
-    table = soup.find('table', attrs={'class':'tb_dados'})
-    table_header = table.find('thead')
-    rows = table_header.find_all('tr')
-    for row in rows:
-      cols = row.find_all('th')
-      cols = [ele.text.strip() for ele in cols]
-      data.append([ele for ele in cols if ele]) # Get rid of empty values
-
-    table_body = table.find('tbody')
-    rows = table_body.find_all('tr')
-    for row in rows:
-      cols = row.find_all('td')
-      cols = [ele.text.strip() for ele in cols]
-      data.append([ele for ele in cols if ele]) # Get rid of empty values
-
-    table_footer = table.find('tfoot')
-    rows = table_footer.find_all('tr')
-    for row in rows:
-      cols = row.find_all('td')
-      cols = [ele.text.strip() for ele in cols]
-      data.append([ele for ele in cols if ele]) # Get rid of empty values
-
-    print(data)
-
-    #print(page.text)
-
-    print("year: ", year)
-    return jsonify({"msg": year}), 200
+    return jsonify({"msg": data}), 200
 
 if __name__ == "__main__":
     with app.app_context():
