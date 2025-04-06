@@ -1,12 +1,13 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-from models import User, db, Content
+#from models import User, db, Content
 from datetime import datetime
 import requests
 from parser import Parser
+from database import Database, User, Content
 
-API_VERSION = "v1"
+
 PRODUCTION_OPTION = "02"
 PRODUCTION_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02&ano="
 
@@ -14,9 +15,12 @@ app = Flask(__name__)
 app.config.from_object('config')
 swagger = Swagger(app)
 jwt = JWTManager(app)
-db.init_app(app)
+database = Database(app)
+db = database.get_database()
 
-@app.route(f"/register/{API_VERSION}", methods=["POST"])
+#db.init_app(app)
+
+@app.route("/register", methods=["POST"])
 def register_user():
     """
     Registra um novo usuário.
@@ -50,7 +54,7 @@ def register_user():
     
     return jsonify({"message": "User registered successfully"}), 201
 
-@app.route(f"/login/{API_VERSION}", methods=["POST"])
+@app.route("/login", methods=["POST"])
 def login():
     """
     Faz login do usuário e retorna um JWT.
@@ -80,7 +84,7 @@ def login():
         return jsonify({"access_token": token}), 200
     return jsonify({"error": "Invalid credentials"}), 401
 
-@app.route(f"/protected/{API_VERSION}", methods=["GET"])
+@app.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
     """
@@ -107,7 +111,7 @@ def protected():
     current_user_id = get_jwt_identity()
     return jsonify({"msg": f"Usuário com ID {current_user_id} acessou a rota protegida"}), 200
 
-@app.route(f"/production/{API_VERSION}/<int:year>", methods=["GET"])
+@app.route("/production/<int:year>", methods=["GET"])
 def production(year):
     """
     Retorna a dados da produção de uvas, vinhos e derivados
@@ -130,10 +134,8 @@ def production(year):
     parser = Parser(requests.get(url))
     data = parser.parse()
 
-    new_content = Content(option=PRODUCTION_OPTION, suboption=None, year=year, content=str(data))
-    db.session.add(new_content)
-    db.session.commit()
-
+    database.record_content(PRODUCTION_OPTION, None, year, data)
+    
     return jsonify({"msg": data}), 200
 
 if __name__ == "__main__":
