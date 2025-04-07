@@ -7,8 +7,9 @@ from parser import Parser
 from database import Database, User, Content
 
 
-PRODUCTION_OPTION = "02"
-PRODUCTION_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02&ano="
+VALID_OPTIONS = ["02", "03", "04", "05", "06"]
+VALID_SUBOPTIONS = ["02", "03", "04", "05"]
+PRODUCTION_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?"
 
 #http://vitibrasil.cnpuv.embrapa.br/index.php?ano=2023&opcao=opt_03&subopcao=subopt_02
 
@@ -112,34 +113,52 @@ def protected():
     current_user_id = get_jwt_identity()
     return jsonify({"msg": f"Usuário com ID {current_user_id} acessou a rota protegida"}), 200
 
-@app.route("/production/<int:year>", methods=["GET"])
-def production(year):
+@app.route("/production/<int:ano>/<string:opcao>/<string:subopcao>", methods=["GET"])
+def production(ano, opcao, subopcao):
     """
     Retorna a dados da produção de uvas, vinhos e derivados
     ---
     parameters:
       - in: path
-        name: year
+        name: ano
         type: integer
         required: true
+      - in: path
+        name: opcao
+        type: string
+        required: true
+      - in: path
+        name: subopcao
+        type: string
+        required: false
+
     responses:
       200:
         description: Dados de produção do ano enviado
       401:
         description: Ano inválido
     """
-    if 1970 < year > datetime.now().year:
+    if 1970 < ano > datetime.now().year:
         jsonify({"msg": "Ano inválido"}), 401
 
-    content = database.get_persisted_content(PRODUCTION_OPTION, None, year)
+    if str(opcao) not in VALID_OPTIONS:
+        return jsonify({"msg": "Opção inválida"}), 401
+
+    # validar subopcao    
+
+    content = database.get_persisted_content(opcao, None, ano)
     if content:
         return jsonify({"msg": content.content}), 200
-        
-    url = f"{PRODUCTION_URL}{year}"
+
+    if opcao == "02" or opcao == "04":
+      url = f"{PRODUCTION_URL}&ano={ano}&opcao=opt_{opcao}"
+    else:
+      url = f"{PRODUCTION_URL}&ano={ano}&opcao=opt_{opcao}&subopcao=subopt_{subopcao}"
+
     parser = Parser(requests.get(url))
     data = parser.parse()
 
-    database.persist_content(PRODUCTION_OPTION, None, year, data)
+    database.persist_content(opcao, subopcao, ano, data)
     
     return jsonify({"msg": data}), 200
 
