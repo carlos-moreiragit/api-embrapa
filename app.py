@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-#from models import User, db, Content
 from datetime import datetime
 import requests
 from parser import Parser
@@ -10,6 +9,8 @@ from database import Database, User, Content
 
 PRODUCTION_OPTION = "02"
 PRODUCTION_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02&ano="
+
+#http://vitibrasil.cnpuv.embrapa.br/index.php?ano=2023&opcao=opt_03&subopcao=subopt_02
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -130,11 +131,15 @@ def production(year):
     if 1970 < year > datetime.now().year:
         jsonify({"msg": "Ano inválido"}), 401
 
+    content = database.get_persisted_content(PRODUCTION_OPTION, None, year)
+    if content:
+        return jsonify({"msg": content.content}), 200
+        
     url = f"{PRODUCTION_URL}{year}"
     parser = Parser(requests.get(url))
     data = parser.parse()
 
-    database.record_content(PRODUCTION_OPTION, None, year, data)
+    database.persist_content(PRODUCTION_OPTION, None, year, data)
     
     return jsonify({"msg": data}), 200
 

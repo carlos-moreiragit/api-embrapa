@@ -9,10 +9,15 @@ class Database():
     def get_database(self):
         return db
     
-    def record_content(self, option, suboption, year, data):
+    def persist_content(self, option, suboption, year, data):
         new_content = Content(option=option, suboption=suboption, year=year, content=str(data))
         db.session.add(new_content)
         db.session.commit()
+
+    def get_persisted_content(self, option, suboption, year):
+        content = Content.query.filter_by(option=option, suboption=suboption, year=year).first()
+        return content
+
     
 class User(db.Model):  
     id = db.Column(db.Integer, primary_key=True)
