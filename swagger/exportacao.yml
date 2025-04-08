@@ -1,4 +1,4 @@
-Retorna a dados do processamento de uvas, vinhos e derivados
+Retorna dados da exportação de uvas, vinhos e derivados
 ---
 parameters:
   - in: path
@@ -14,6 +14,6 @@ parameters:
 
 responses:
   200:
-    description: Dados de processamento do ano enviado
+    description: Dados de exportação do ano enviado
   401:
     description: Ano inválido

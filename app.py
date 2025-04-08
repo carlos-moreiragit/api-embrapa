@@ -2,10 +2,7 @@ from flask import Flask, jsonify, request
 from flasgger import Swagger, swag_from
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from database import Database
-from common import common_api
-
-OPCAO_PROCESSAMENTO = "03"
-OPCAO_PRODUCAO = "02"
+from common import common_api, is_date_valid
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -42,16 +39,68 @@ def protected():
     current_user_id = get_jwt_identity()
     return jsonify({"msg": f"Usuário com ID {current_user_id} acessou a rota protegida"}), 200
 
-@app.route("/processamento/<int:ano>/<string:subopcao>", methods=["GET"])
-@swag_from('swagger/processamento.yml')
-def processamento(ano, subopcao):
-    # subopcao 01, 02, 03, 04
-    return common_api(database, ano, OPCAO_PROCESSAMENTO, subopcao)
-
 @app.route("/producao/<int:ano>", methods=["GET"])
 @swag_from('swagger/producao.yml')
 def producao(ano):
+    OPCAO_PRODUCAO = "02"
+    if not is_date_valid(ano):
+        jsonify({"msg": "Ano inválido"}), 401
+
     return common_api(database, ano, OPCAO_PRODUCAO)
+
+@app.route("/processamento/<int:ano>/<string:subopcao>", methods=["GET"])
+@swag_from('swagger/processamento.yml')
+def processamento(ano, subopcao):
+    
+    OPCAO_PROCESSAMENTO = "03"
+    VALID_SUBOPTIONS = ["01", "02", "03", "04"]
+
+    if not is_date_valid(ano):
+        jsonify({"msg": "Ano inválido"}), 401
+
+    if str(subopcao) not in VALID_SUBOPTIONS:
+        return jsonify({"msg": "Subopção inválida"}), 401
+
+    return common_api(database, ano, OPCAO_PROCESSAMENTO, subopcao)
+
+@app.route("/comercializacao/<int:ano>", methods=["GET"])
+@swag_from('swagger/comercializacao.yml')
+def comercializacao(ano):
+    OPCAO_COMERCIALIZACAO = "04"
+    if not is_date_valid(ano):
+        jsonify({"msg": "Ano inválido"}), 401
+
+    return common_api(database, ano, OPCAO_COMERCIALIZACAO)
+
+@app.route("/importacao/<int:ano>/<string:subopcao>", methods=["GET"])
+@swag_from('swagger/importacao.yml')
+def importacao(ano, subopcao):
+    
+    OPCAO_IMPORTACAO = "05"
+    VALID_SUBOPTIONS = ["01", "02", "03", "04", "05"]
+
+    if not is_date_valid(ano):
+        jsonify({"msg": "Ano inválido"}), 401
+
+    if str(subopcao) not in VALID_SUBOPTIONS:
+        return jsonify({"msg": "Subopção inválida"}), 401
+
+    return common_api(database, ano, OPCAO_IMPORTACAO, subopcao)
+
+@app.route("/exportacao/<int:ano>/<string:subopcao>", methods=["GET"])
+@swag_from('swagger/exportacao.yml')
+def exportacao(ano, subopcao):
+    
+    OPCAO_EXPORTACAO = "06"
+    VALID_SUBOPTIONS = ["01", "02", "03", "04"]
+
+    if not is_date_valid(ano):
+        jsonify({"msg": "Ano inválido"}), 401
+
+    if str(subopcao) not in VALID_SUBOPTIONS:
+        return jsonify({"msg": "Subopção inválida"}), 401
+
+    return common_api(database, ano, OPCAO_EXPORTACAO, subopcao)
 
 
 if __name__ == "__main__":

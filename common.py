@@ -1,22 +1,11 @@
 from flask import jsonify
-from datetime import datetime
 import requests
 from parser import Parser
+from datetime import datetime
 
 def common_api(database, ano, opcao, subopcao=None):
 
-    VALID_OPTIONS = ["02", "03", "04", "05", "06"]
-    VALID_SUBOPTIONS = ["01", "02", "03", "04", "05"]
     SITE_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?"
-
-    if 1970 < ano > datetime.now().year:
-        jsonify({"msg": "Ano inválido"}), 401
-
-    if str(opcao) not in VALID_OPTIONS:
-        return jsonify({"msg": "Opção inválida"}), 401
-    
-    if subopcao and str(subopcao) not in VALID_SUBOPTIONS:
-        return jsonify({"msg": "Subopção inválida"}), 401
 
     content = database.get_persisted_content(opcao, subopcao, ano)
     if content:
@@ -34,3 +23,8 @@ def common_api(database, ano, opcao, subopcao=None):
     
     return jsonify({"msg": data}), 200
 
+def is_date_valid(ano):
+       if 1970 < ano > datetime.now().year:
+        return False
+       
+       return True

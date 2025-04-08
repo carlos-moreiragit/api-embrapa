@@ -1,0 +1,13 @@
+Retorna a dados da comercialização de uvas, vinhos e derivados
+---
+parameters:
+  - in: path
+    name: ano
+    type: integer
+    required: true
+
+responses:
+  200:
+    description: Dados de comercialização do ano enviado
+  401:
+    description: Ano inválido
