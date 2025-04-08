@@ -17,7 +17,18 @@ class Database():
     def get_persisted_content(self, option, suboption, year):
         content = Content.query.filter_by(option=option, suboption=suboption, year=year).first()
         return content
-
+    
+    def get_user(self, username, password=None):
+        if password:
+            user = User.query.filter_by(username=username, password=password).first()
+        else:
+            user = User.query.filter_by(username=username).first()
+        return user
+    
+    def create_user(self, username, password):
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
     
 class User(db.Model):  
     id = db.Column(db.Integer, primary_key=True)

@@ -1,0 +1,20 @@
+Registra um novo usuário.
+---
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+        type: object
+        properties:
+            username:
+                type: string
+                required: true
+            password:
+                type: string
+                required: true
+responses:
+  201:
+    description: Usuário registrado com sucesso
+  400:
+    description: Usuário já existe

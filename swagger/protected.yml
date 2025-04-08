@@ -1,0 +1,19 @@
+Rota protegida por autenticação
+---
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+        type: object
+        properties:
+            username:
+                type: string
+            password:
+                type: string
+
+responses:
+  200:
+    description: Rota protegida acessada com sucesso
+  400:
+    description: Erro de autenticação

@@ -1,17 +1,11 @@
 from flask import Flask, jsonify, request
-from flasgger import Swagger
+from flasgger import Swagger, swag_from
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-from datetime import datetime
-import requests
-from parser import Parser
-from database import Database, User, Content
+from database import Database
+from common import common_api
 
-
-VALID_OPTIONS = ["02", "03", "04", "05", "06"]
-VALID_SUBOPTIONS = ["02", "03", "04", "05"]
-PRODUCTION_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?"
-
-#http://vitibrasil.cnpuv.embrapa.br/index.php?ano=2023&opcao=opt_03&subopcao=subopt_02
+OPCAO_PROCESSAMENTO = "03"
+OPCAO_PRODUCAO = "02"
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -20,66 +14,21 @@ jwt = JWTManager(app)
 database = Database(app)
 db = database.get_database()
 
-#db.init_app(app)
-
 @app.route("/register", methods=["POST"])
+@swag_from('swagger/register.yml')
 def register_user():
-    """
-    Registra um novo usuário.
-    ---
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-            type: object
-            properties:
-                username:
-                    type: string
-                    required: true
-                password:
-                    type: string
-                    required: true
-    responses:
-      201:
-        description: Usuário registrado com sucesso
-      400:
-        description: Usuário já existe
-          
-    """
+
     data = request.get_json()
-    if User.query.filter_by(username=data["username"]).first():
+    if database.get_user(data["username"]):
         return jsonify({"error": "User already exists"}), 201
-    new_user = User(username=data["username"], password=data["password"])
-    db.session.add(new_user)
-    db.session.commit()
-    
+    database.create_user(username=data["username"], password=data["password"])
     return jsonify({"message": "User registered successfully"}), 201
 
 @app.route("/login", methods=["POST"])
+@swag_from('swagger/login.yml')
 def login():
-    """
-    Faz login do usuário e retorna um JWT.
-    ---
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-            type: object
-            properties:
-                username:
-                    type: string
-                password:
-                    type: string
-    responses:
-      200:
-        description: Login bem sucedido, retorna JWT
-      401:
-        description: Credenciais inválidas
-    """
     data = request.get_json()
-    user = User.query.filter_by(username=data["username"]).first()
+    user = database.get_user(data["username"], data["password"])
     if user and user.password == data["password"]:
         # converter o ID para string
         token = create_access_token(identity=str(user.id))
@@ -88,79 +37,22 @@ def login():
 
 @app.route("/protected", methods=["GET"])
 @jwt_required()
+@swag_from('swagger/protected.yml')
 def protected():
-    """
-    Rota protegida por autenticação
-    ---
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-            type: object
-            properties:
-                username:
-                    type: string
-                password:
-                    type: string
-
-    responses:
-      200:
-        description: Rota protegida acessada com sucesso
-      400:
-        description: Erro de autenticação
-    """
     current_user_id = get_jwt_identity()
     return jsonify({"msg": f"Usuário com ID {current_user_id} acessou a rota protegida"}), 200
 
-@app.route("/production/<int:ano>/<string:opcao>/<string:subopcao>", methods=["GET"])
-def production(ano, opcao, subopcao):
-    """
-    Retorna a dados da produção de uvas, vinhos e derivados
-    ---
-    parameters:
-      - in: path
-        name: ano
-        type: integer
-        required: true
-      - in: path
-        name: opcao
-        type: string
-        required: true
-      - in: path
-        name: subopcao
-        type: string
-        required: false
+@app.route("/processamento/<int:ano>/<string:subopcao>", methods=["GET"])
+@swag_from('swagger/processamento.yml')
+def processamento(ano, subopcao):
+    # subopcao 01, 02, 03, 04
+    return common_api(database, ano, OPCAO_PROCESSAMENTO, subopcao)
 
-    responses:
-      200:
-        description: Dados de produção do ano enviado
-      401:
-        description: Ano inválido
-    """
-    if 1970 < ano > datetime.now().year:
-        jsonify({"msg": "Ano inválido"}), 401
+@app.route("/producao/<int:ano>", methods=["GET"])
+@swag_from('swagger/producao.yml')
+def producao(ano):
+    return common_api(database, ano, OPCAO_PRODUCAO)
 
-    if str(opcao) not in VALID_OPTIONS:
-        return jsonify({"msg": "Opção inválida"}), 401
-
-    # validar subopcao    
-
-    content = database.get_persisted_content(opcao, None, ano)
-    if content:
-        return jsonify({"msg": content.content}), 200
-
-    if opcao == "02" or opcao == "04":
-      url = f"{PRODUCTION_URL}&ano={ano}&opcao=opt_{opcao}"
-    else:
-      url = f"{PRODUCTION_URL}&ano={ano}&opcao=opt_{opcao}&subopcao=subopt_{subopcao}"
-
-    parser = Parser(requests.get(url))
-    data = parser.parse()
-
-    database.persist_content(opcao, subopcao, ano, data)
-    
-    return jsonify({"msg": data}), 200
 
 if __name__ == "__main__":
     with app.app_context():

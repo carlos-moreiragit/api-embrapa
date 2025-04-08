@@ -1,0 +1,19 @@
+Retorna a dados da produção de uvas, vinhos e derivados
+---
+parameters:
+  - in: path
+    name: ano
+    type: integer
+    required: true
+  - in: path
+    name: subopcao
+    type: string
+    enum: ['01', '02', '03', '04']
+    default: '01'
+    required: true
+
+responses:
+  200:
+    description: Dados de produção do ano enviado
+  401:
+    description: Ano inválido
