@@ -16,12 +16,21 @@ def common_api(database, ano, opcao, subopcao=None):
     else:
       url = f"{SITE_URL}&ano={ano}&opcao=opt_{opcao}&subopcao=subopt_{subopcao}"
 
-    parser = Parser(requests.get(url))
-    data = parser.parse()
+    try:
+        requests.get(url)
+        parser = Parser(requests.get(url))
+        data = parser.parse()
 
-    database.persist_content(opcao, subopcao, ano, data)
+        database.persist_content(opcao, subopcao, ano, data)
+        return jsonify({"msg": data}), 200
     
-    return jsonify({"msg": data}), 200
+    except(AttributeError, KeyError) as e:
+       return jsonify({"msg": "Serviço instável, tente mais tarde."}), 503
+      
+    except requests.exceptions.RequestException as e:
+       return jsonify({"msg": "Serviço indisponível, tente mais tarde."}), 503
+       
+    
 
 def is_date_valid(ano):
        if 1970 < ano > datetime.now().year:
