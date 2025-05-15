@@ -23,6 +23,6 @@ responses:
   200:
     description: Dados de processamento do ano enviado
   400:
-    description: Ano inválido
+    description: Ano ou subopcao inválida
   503:
     description: Serviço indisponível, tente mais tarde
