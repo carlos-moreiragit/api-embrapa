@@ -14,6 +14,11 @@ class Database():
         db.session.add(new_content)
         db.session.commit()
 
+    def update_content(self, id, data):
+        content = Content.query.filter_by(id=id).first()
+        content.content = str(data)
+        db.session.commit()
+
     def get_persisted_content(self, option, suboption, year):
         content = Content.query.filter_by(option=option, suboption=suboption, year=year).first()
         return content

@@ -1,4 +1,4 @@
-Retorna a dados da produção de uvas, vinhos e derivados
+Retorna a dados da produção de uvas, vinhos e derivados a partir de 1970.
 ---
 parameters:
   - in: path
@@ -11,3 +11,5 @@ responses:
     description: Dados de produção do ano enviado
   401:
     description: Ano inválido
+  503:
+    description: Serviço indisponível, tente mais tarde

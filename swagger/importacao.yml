@@ -1,4 +1,12 @@
-Retorna a dados de importação de uvas, vinhos e derivados
+Retorna a dados de importação de uvas, vinhos e derivados a partir de 1970.
+
+Os valores para a subopcao são:
+
+  01 - Vinhos de mesa (default)
+  02 - Espumantes
+  03 - Uvas frescas
+  04 - Uvas passas
+  05 - Suco de uva
 ---
 parameters:
   - in: path
@@ -17,3 +25,5 @@ responses:
     description: Dados de importação do ano enviado
   401:
     description: Ano inválido
+  503:
+    description: Serviço indisponível, tente mais tarde

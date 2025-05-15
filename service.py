@@ -10,10 +10,10 @@ class Service:
     ANO_LIMITE_INFERIOR = 1970
 
     def processa(self, database, ano, opcao, subopcao=None):
-
+        
         content = database.get_persisted_content(opcao, subopcao, ano)
-        if content:
-            return jsonify({"msg": content.content}), 200
+
+        print(content)
 
         if opcao == "02" or opcao == "04":
             url = f"{self.SITE_URL}&ano={ano}&opcao=opt_{opcao}"
@@ -25,16 +25,25 @@ class Service:
             parser = Parser(requests.get(url))
             data = parser.parse()
 
-            database.persist_content(opcao, subopcao, ano, data)
+            if content:
+                database.update_content(content.id, data)
+            else:
+                database.persist_content(opcao, subopcao, ano, data)
+            
+            print("Conteúdo do SITE recuperado")
             return jsonify({"msg": data}), 200
         
         except(AttributeError, KeyError) as e:
-            return jsonify({"msg": "Serviço instável, tente mais tarde."}), 503
+            return jsonify({"msg": "SServiço indisponível, tente mais tarde."}), 503
         
         except requests.exceptions.RequestException as e:
+
+            if content:
+                print("Conteúdo do BANCO DE DADOS recuperado")
+                return jsonify({"msg": content.content}), 200
+
             return jsonify({"msg": "Serviço indisponível, tente mais tarde."}), 503
-        
-        
+                
 
     def valida_data(self, ano):
         if self.ANO_LIMITE_INFERIOR < ano > datetime.now().year:

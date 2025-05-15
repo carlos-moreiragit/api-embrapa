@@ -1,4 +1,11 @@
-Retorna a dados do processamento de uvas, vinhos e derivados
+Retorna a dados do processamento de uvas, vinhos e derivados a partir de 1970.
+
+Os valores para a subopcao são:
+
+  01 - Viníferas (default)
+  02 - Americanas e híbridas
+  03 - Uvas de mesa
+  04 - Sem classificação
 ---
 parameters:
   - in: path
@@ -17,3 +24,5 @@ responses:
     description: Dados de processamento do ano enviado
   401:
     description: Ano inválido
+  503:
+    description: Serviço indisponível, tente mais tarde
