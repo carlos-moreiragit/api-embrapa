@@ -34,7 +34,7 @@ class Service:
             return jsonify({"msg": data}), 200
         
         except(AttributeError, KeyError) as e:
-            return jsonify({"msg": "SServiço indisponível, tente mais tarde."}), 503
+            return jsonify({"msg": "Serviço indisponível, tente mais tarde."}), 503
         
         except requests.exceptions.RequestException as e:
 

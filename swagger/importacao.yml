@@ -23,7 +23,7 @@ parameters:
 responses:
   200:
     description: Dados de importação do ano enviado
-  401:
+  400:
     description: Ano inválido
   503:
     description: Serviço indisponível, tente mais tarde
