@@ -16,5 +16,5 @@ parameters:
 responses:
   201:
     description: Usuário registrado com sucesso
-  400:
+  403:
     description: Usuário já existe

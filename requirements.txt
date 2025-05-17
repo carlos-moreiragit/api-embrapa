@@ -5,4 +5,5 @@ flask-jwt-extended
 beautifulsoup4
 requests
 psycopg2
+bcrypt
 

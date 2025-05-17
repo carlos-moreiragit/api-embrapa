@@ -23,12 +23,8 @@ class Database():
         content = Content.query.filter_by(option=option, suboption=suboption, year=year).first()
         return content
     
-    def get_user(self, username, password=None):
-        if password:
-            user = User.query.filter_by(username=username, password=password).first()
-        else:
-            user = User.query.filter_by(username=username).first()
-        return user
+    def get_user(self, username):
+        return User.query.filter_by(username=username).first()
     
     def create_user(self, username, password):
         new_user = User(username=username, password=password)

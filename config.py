@@ -1,7 +1,7 @@
 SECRET_KEY = "chave secreta"
 CACHE_TYPE = "simple"
 SWAGGER = {
-    "title": "Dados da Vitivinicultura",
+    "title": "Dados da Vitivinicultura a partir de 1970 até os dias atuais.",
     "uiversion": 3,
     }
 SQLALCHEMY_DATABASE_URI = "sqlite:///api-embrapa.db"

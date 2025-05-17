@@ -1,8 +1,9 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect, url_for
 from flasgger import Swagger, swag_from
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from database import Database
 from service import Service
+import bcrypt
 
 
 app = Flask(__name__)
@@ -13,25 +14,30 @@ database = Database(app)
 db = database.get_database()
 service = Service()
 
+@app.route('/')
+def root():
+    return redirect(url_for("flasgger.apidocs"))
+
+
 @app.route("/register", methods=["POST"])
 @swag_from('swagger/register.yml')
 def register_user():
-
     data = request.get_json()
     if database.get_user(data["username"]):
-        return jsonify({"error": "User already exists"}), 201
-    database.create_user(username=data["username"], password=data["password"])
+        return jsonify({"error": "User already exists"}), 403
+    
+    database.create_user(username=data["username"], password=bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()))
     return jsonify({"message": "User registered successfully"}), 201
 
 @app.route("/login", methods=["POST"])
 @swag_from('swagger/login.yml')
 def login():
     data = request.get_json()
-    user = database.get_user(data["username"], data["password"])
-    if user and user.password == data["password"]:
-        # converter o ID para string
-        token = create_access_token(identity=str(user.id))
-        return jsonify({"access_token": token}), 200
+    user = database.get_user(data["username"])
+
+    if bcrypt.checkpw(data["password"].encode('utf-8'), user.password):
+        return jsonify({"access_token": create_access_token(identity=str(user.id))}), 200
+    
     return jsonify({"error": "Invalid credentials"}), 401
 
 @app.route("/protected", methods=["GET"])
