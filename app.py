@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from database import Database
 from service import Service
 
+
 app = Flask(__name__)
 app.config.from_object('config')
 swagger = Swagger(app)
@@ -33,7 +34,7 @@ def login():
         return jsonify({"access_token": token}), 200
     return jsonify({"error": "Invalid credentials"}), 401
 
-@app.route("/protected", methods=["POST"])
+@app.route("/protected", methods=["GET"])
 @jwt_required()
 @swag_from('swagger/protected.yml')
 def protected():

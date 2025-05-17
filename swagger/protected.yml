@@ -1,16 +1,13 @@
 Rota protegida por autenticação
 ---
 parameters:
-  - in: body
-    name: body
+  - in: header
+    name: authorization    # <---- HTTP header name
     required: true
-    schema:
-        type: object
-        properties:
-            username:
-                type: string
-            password:
-                type: string
+    type: string
+    description: Adicione o termo Bearer antes do token
+security:
+  - Bearer: []
 
 responses:
   200:
