@@ -19,10 +19,19 @@ parameters:
     enum: ['01', '02', '03', '04', '05']
     default: '01'
     required: true
+  - in: header
+    name: authorization    # <---- HTTP header name
+    required: true
+    type: string
+    description: Adicione o termo Bearer antes do token
+security:
+  - Bearer: []
 
 responses:
   200:
     description: Dados de importação do ano enviado
+  226:
+    description: Dados enviados do cache local
   400:
     description: Ano ou subopcao inválida
   503:

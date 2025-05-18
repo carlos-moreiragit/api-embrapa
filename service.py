@@ -30,7 +30,6 @@ class Service:
             else:
                 database.persist_content(opcao, subopcao, ano, data)
             
-            print("Conteúdo do SITE recuperado")
             return jsonify({"msg": data}), 200
         
         except(AttributeError, KeyError) as e:
@@ -39,8 +38,7 @@ class Service:
         except requests.exceptions.RequestException as e:
 
             if content:
-                print("Conteúdo do BANCO DE DADOS recuperado")
-                return jsonify({"msg": content.content}), 200
+                return jsonify({"msg": content.content}), 226
 
             return jsonify({"msg": "Serviço indisponível, tente mais tarde."}), 503
                 

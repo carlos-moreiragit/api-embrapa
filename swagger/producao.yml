@@ -5,10 +5,19 @@ parameters:
     name: ano
     type: integer
     required: true
+  - in: header
+    name: authorization    # <---- HTTP header name
+    required: true
+    type: string
+    description: Adicione o termo Bearer antes do token
+security:
+  - Bearer: []
 
 responses:
   200:
     description: Dados de produção do ano enviado
+  226:
+    description: Dados enviados do cache local
   400:
     description: Ano inválido
   503:
