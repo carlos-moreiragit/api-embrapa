@@ -19,17 +19,16 @@ service = Service()
 def root():
     return redirect(url_for("flasgger.apidocs"))
 
-@app.route("/register", methods=["POST"])
-@swag_from('swagger/register.yml')
+@app.route("/registro", methods=["POST"])
+@swag_from('swagger/registro.yml')
 def register_user():
     data = request.get_json()
     if database.get_user(data["username"]):
-        return jsonify({"error": "User already exists"}), 403
+        return jsonify({"msg": "O usuár já existe"}), 403
     
-
     hashed_password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
     database.create_user(username=data["username"], password=hashed_password.decode('utf-8'))
-    return jsonify({"message": "User registered successfully"}), 201
+    return jsonify({"mesg": "Usuário criado com sucesso"}), 201
 
 @app.route("/login", methods=["POST"])
 @swag_from('swagger/login.yml')
@@ -42,13 +41,6 @@ def login():
             return jsonify({"access_token": create_access_token(identity=str(user.id))}), 200
     
     return jsonify({"error": "Invalid credentials"}), 401
-
-@app.route("/protected", methods=["GET"])
-@jwt_required()
-@swag_from('swagger/protected.yml')
-def protected():
-    current_user_id = get_jwt_identity()
-    return jsonify({"msg": f"Usuário com ID {current_user_id} acessou a rota protegida"}), 200
 
 @app.route("/producao/<int:ano>", methods=["GET"])
 @jwt_required()

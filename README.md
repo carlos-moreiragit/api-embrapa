@@ -1,7 +1,38 @@
 # Projeto Fase 1 5MLET
 Este documento contém informações sobre a projeto da API EMBRAPA que fornece dados da Dados da Vitivinicultura desde a década de 70 até os dias atuais
 
+## URL do MVP
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/
+
+
 ## Endpoints
+
+
+Endpoints para criação de usuário e login:
+
+# Registro de Usuário
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/apidocs/#/default/post_register
+
+# Login
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/apidocs/#/default/post_login
+
+
+Os endpoints abaixo são os que trazem os dados da EMBRAPA:
+
+# Comercialização
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/apidocs/#/default/get_comercializacao__ano_
+
+# Exportação
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/apidocs/#/default/get_exportacao__ano___subopcao_
+
+# Importação
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/apidocs/#/default/get_importacao__ano___subopcao_
+
+# Processamento
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/apidocs/#/default/get_processamento__ano___subopcao_
+
+# Produção
+https://api-embrapa-k7b6lkl5p-carlos-projects-42c43b32.vercel.app/apidocs/#/default/get_producao__ano_
 
 
 ## Funcionalidades
@@ -19,5 +50,5 @@ Este documento contém informações sobre a projeto da API EMBRAPA que fornece 
 - flask-jwt-extended
 - beautifulsoup4
 - requests
-- psycopg2
+- psycopg2-binary
 - bcrypt
