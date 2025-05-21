@@ -14,5 +14,7 @@ parameters:
 responses:
   200:
     description: Login bem sucedido, retorna JWT
+  400:
+    description: Campos username e password não informados, menores que 5 caracteres ou maiores que 10 caracteres
   401:
     description: Credenciais inválidas

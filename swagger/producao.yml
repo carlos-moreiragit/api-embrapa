@@ -20,5 +20,7 @@ responses:
     description: Dados enviados do cache local
   400:
     description: Ano inválido
+  401:
+    description: Faltando header de autorização
   503:
     description: Serviço indisponível, tente mais tarde

@@ -8,12 +8,14 @@ class Service:
         
     SITE_URL = "http://vitibrasil.cnpuv.embrapa.br/index.php?"
     ANO_LIMITE_INFERIOR = 1970
+    TAMANHO_MINIMO_SENHA = 5
+    TAMANHO_MAXIMO_SENHA = 10
+    TAMANHO_MINIMO_USUARIO = 5
+    TAMANHO_MAXIMO_USUARIO = 10
 
     def processa(self, database, ano, opcao, subopcao=None):
         
         content = database.get_persisted_content(opcao, subopcao, ano)
-
-        print(content)
 
         if opcao == "02" or opcao == "04":
             url = f"{self.SITE_URL}&ano={ano}&opcao=opt_{opcao}"
@@ -44,7 +46,20 @@ class Service:
                 
 
     def valida_data(self, ano):
-        if self.ANO_LIMITE_INFERIOR < ano > datetime.now().year:
+        if not(self.ANO_LIMITE_INFERIOR <= ano <= datetime.now().year):
             return False
         
+        return True
+
+    def valida_dados_usuario(self, data):
+
+        try:
+            username = data["username"]
+            password = data["password"]
+            if not (self.TAMANHO_MINIMO_USUARIO <= len(username) <= self.TAMANHO_MAXIMO_USUARIO) or not (self.TAMANHO_MINIMO_SENHA <= len(password) <= self.TAMANHO_MAXIMO_SENHA):
+                return False
+
+        except(KeyError) as e:
+            return False
+
         return True

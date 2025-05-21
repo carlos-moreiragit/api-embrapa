@@ -23,17 +23,25 @@ def root():
 @swag_from('swagger/registro.yml')
 def register_user():
     data = request.get_json()
-    if database.get_user(data["username"]):
-        return jsonify({"msg": "O usuár já existe"}), 403
     
+    if not service.valida_dados_usuario(data):
+        return jsonify({"msg": "Campos username e password não informados, menores que 5 caracteres ou maiores que 10 caracteres"}), 400
+
+    if database.get_user(data["username"]):
+        return jsonify({"msg": "O usuário já existe"}), 403
+
     hashed_password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
     database.create_user(username=data["username"], password=hashed_password.decode('utf-8'))
-    return jsonify({"mesg": "Usuário criado com sucesso"}), 201
+    return jsonify({"msg": "Usuário criado com sucesso"}), 201
 
 @app.route("/login", methods=["POST"])
 @swag_from('swagger/login.yml')
 def login():
     data = request.get_json()
+
+    if not service.valida_dados_usuario(data):
+        return jsonify({"msg": "Campos username e password não informados, menores que 5 caracteres ou maiores que 10 caracteres"}), 400
+
     user = database.get_user(data["username"])
 
     if user:
