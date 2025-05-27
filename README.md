@@ -13,7 +13,7 @@ https://api-embrapa-phi.vercel.app/
 - Todas as funcionalidades do site estão presentes na API, como filtro por ano, tipos de uvas e etc...
 
 # Detalhes Técnicos
-- MVP publicado no Vercel em: https://api-embrapa-phi.vercel.app/registro
+- MVP publicado no Vercel em: https://api-embrapa-phi.vercel.app/
 - Banco de dados Neon
 
 ## Pacotes Utilizados

@@ -46,7 +46,8 @@ class Service:
                 
 
     def valida_data(self, ano):
-        if not(self.ANO_LIMITE_INFERIOR <= ano <= datetime.now().year):
+        if not (self.ANO_LIMITE_INFERIOR <= ano <= datetime.now().year):
+            print(self.ANO_LIMITE_INFERIOR <= ano <= datetime.now().year)
             return False
         
         return True

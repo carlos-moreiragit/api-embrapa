@@ -57,7 +57,7 @@ def producao(ano):
     OPCAO_PRODUCAO = "02"
 
     if not service.valida_data(ano):
-        jsonify({"msg": "Ano inválido"}), 400
+        return jsonify({"msg": "Ano inválido"}), 400
 
     return service.processa(database, ano, OPCAO_PRODUCAO)
 
@@ -71,7 +71,7 @@ def processamento(ano, subopcao):
     SUBOPCOES_VALIDAS = ["01", "02", "03", "04"]
 
     if not service.valida_data(ano):
-        jsonify({"msg": "Ano inválido"}), 400
+        return jsonify({"msg": "Ano inválido"}), 400
 
     if str(subopcao) not in SUBOPCOES_VALIDAS:
         return jsonify({"msg": "Subopção inválida"}), 400
@@ -86,7 +86,7 @@ def comercializacao(ano):
     OPCAO_COMERCIALIZACAO = "04"
 
     if not service.valida_data(ano):
-        jsonify({"msg": "Ano inválido"}), 400
+        return jsonify({"msg": "Ano inválido"}), 400
 
     return service.processa(database, ano, OPCAO_COMERCIALIZACAO)
 
@@ -99,7 +99,7 @@ def importacao(ano, subopcao):
     SUBOPCOES_VALIDAS = ["01", "02", "03", "04", "05"]
 
     if not service.valida_data(ano):
-        jsonify({"msg": "Ano inválido"}), 400
+        return jsonify({"msg": "Ano inválido"}), 400
 
     if str(subopcao) not in SUBOPCOES_VALIDAS:
         return jsonify({"msg": "Subopção inválida"}), 400
@@ -116,7 +116,7 @@ def exportacao(ano, subopcao):
     SUBOPCOES_VALIDAS = ["01", "02", "03", "04"]
 
     if not service.valida_data(ano):
-        jsonify({"msg": "Ano inválido"}), 400
+        return jsonify({"msg": "Ano inválido"}), 400
 
     if str(subopcao) not in SUBOPCOES_VALIDAS:
         return jsonify({"msg": "Subopção inválida"}), 400
