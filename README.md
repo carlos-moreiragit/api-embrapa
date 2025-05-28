@@ -105,7 +105,9 @@ descrição: Campos username e password não informados, menores que 5 caractere
 ***401:***
 descrição: Credenciais inválidas
 ***
-Os endpoints abaixo são os que trazem os dados da EMBRAPA:
+Abaixo a lista dos endpoints de serviço da API, ou seja, aqueles que retornam dados da EMBRAPA:
+
+![Diagrama de Requisição da API](/diagramas/tc01_diagrama_requisicoes.png)
 
 |Funçao|Endpoint|
 | ------ | ------- |
