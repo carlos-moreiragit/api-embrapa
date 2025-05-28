@@ -27,6 +27,15 @@ https://api-embrapa-phi.vercel.app/
 - requests
 - psycopg2-binary
 - bcrypt
+
+## Executar Localmente
+- python -m venv venv
+- pip install -r requirements.txt
+- python index.py
+
+## Modelo de Dados
+![Diagrama do Modelo de Dados](/diagramas/tc01_mer.png)
+
 ***
 ## Utilização
 Para utilizar a API é necessário criar um usuário e fazer login, o que retornará um token válido por 7 dias que deverá ser enviado no header das requisições no formato `Bearer <token>`.
