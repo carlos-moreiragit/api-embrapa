@@ -15,6 +15,7 @@ https://api-embrapa-phi.vercel.app/
 # Detalhes Técnicos
 - MVP publicado no Vercel em: https://api-embrapa-phi.vercel.app/
 - Banco de dados Neon
+- Projeto baseado em Flask e Flasgger
 
 ![Diagrama overview](/diagramas/tc01_overview.png)
 
@@ -38,7 +39,9 @@ https://api-embrapa-phi.vercel.app/
 
 ***
 ## Utilização
-Para utilizar a API é necessário criar um usuário e fazer login, o que retornará um token válido por 7 dias que deverá ser enviado no header das requisições no formato `Bearer <token>`.
+Para utilizar a API é necessário criar um usuário e fazer login, o que retornará um token válido por 7 dias que deverá ser enviado no header das requisições no formato `Bearer <token>`. Veja o diagrama de sequência abaixo:
+
+![Diagrama de Sequência Criação de Usuário e Login](/diagramas/tc01_diagrama_sequencia.png)
 
 ## Endpoints
 Endpoints para criação de usuário e login:
