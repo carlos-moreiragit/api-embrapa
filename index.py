@@ -15,7 +15,7 @@ database = Database(app)
 db = database.get_database()
 service = Service()
 
-@app.route('/')
+@app.route("/")
 def root():
     return redirect(url_for("flasgger.apidocs"))
 

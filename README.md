@@ -1,5 +1,5 @@
 # Projeto Fase 1 5MLET
-Este documento contém informações sobre o projeto da API EMBRAPA que fornece dados da Vitivinicultura desde a década de 70 até os dias atuais.
+Este documento contém informações sobre o projeto da API EMBRAPA que fornece dados da Vitivinicultura desde a década de 70 até os dias atuais. A API usa um banco de dados como cache, a fim de minimizar o efeito de possíveis quedas no site que é a fonte dos dados. 
 
 ## URL do Projeto
 Na URL do projeto você encontrará o Swagger da aplicação para a utilização imediata da API.
@@ -9,13 +9,14 @@ https://api-embrapa-phi.vercel.app/
 ## Funcionalidades
 - Autenticação via JWT com senhas hasheadas pelo bcrypt
 - A API mantém um cache em banco de dados para que a instabilidade do site não afetem os teses
-- A API armazena os resultados das chamadas afim de utilizar essses resultados como o cache do ítem acima
+- A API armazena os resultados das chamadas a fim de utilizar essses resultados como o cache do ítem acima
 - Todas as funcionalidades do site estão presentes na API, como filtro por ano, tipos de uvas e etc...
 
 # Detalhes Técnicos
-- MVP publicado no Vercel em: https://api-embrapa-phi.vercel.app/
+- Python 3.x
 - Banco de dados Neon
 - Projeto baseado em Flask e Flasgger
+- MVP publicado no Vercel em: https://api-embrapa-phi.vercel.app/
 
 ![Diagrama overview](/diagramas/tc01_overview.png)
 
