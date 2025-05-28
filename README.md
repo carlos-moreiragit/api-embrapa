@@ -16,6 +16,8 @@ https://api-embrapa-phi.vercel.app/
 - MVP publicado no Vercel em: https://api-embrapa-phi.vercel.app/
 - Banco de dados Neon
 
+![Diagrama overview](/diagramas/tc01_overview.png)
+
 ## Pacotes Utilizados
 - flask
 - flasgger
