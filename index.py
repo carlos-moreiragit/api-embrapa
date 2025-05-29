@@ -1,12 +1,19 @@
 from flask import Flask, jsonify, request, redirect, url_for
 from flasgger import Swagger, swag_from
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from database import Database
 from service import Service
 import bcrypt
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
+app.config.from_object('config')
+load_dotenv()
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=15)
 swagger = Swagger(app)
 jwt = JWTManager(app)
