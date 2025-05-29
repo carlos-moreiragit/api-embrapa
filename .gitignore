@@ -172,3 +172,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+detalhes_tech_challenge01.txt
+config.py
