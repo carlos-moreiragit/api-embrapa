@@ -7,7 +7,6 @@ import bcrypt
 from datetime import timedelta
 
 app = Flask(__name__)
-app.config.from_object('config')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=15)
 swagger = Swagger(app)
 jwt = JWTManager(app)
