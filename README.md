@@ -29,10 +29,13 @@ https://api-embrapa-phi.vercel.app/
 - requests
 - psycopg2-binary
 - bcrypt
+- python-dotenv
 
 ## Executar Localmente
 - python -m venv venv
 - pip install -r requirements.txt
+- Crie um arquivo .env com as seguintes variáveis de ambiente: SQLALCHEMY_DATABASE_URI, SECRET_KEY, JWT_SECRET_KEY
+- Você pode utilizar o banco de dados SQLite com local ou o Neon Postgres, basta ajustar o valor de SQLALCHEMY_DATABASE_URI de acordo
 - python index.py
 
 ## Modelo de Dados

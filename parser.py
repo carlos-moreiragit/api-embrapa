@@ -4,7 +4,8 @@ class Parser:
     page = None
     def __init__(self, page):
        self.page = page
-       
+
+    # faz o scraping dos dados passados no construtor da classe
     def parse(self):
         soup = BeautifulSoup(self.page.content, "html.parser")
         

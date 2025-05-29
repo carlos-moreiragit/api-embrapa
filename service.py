@@ -14,14 +14,26 @@ class Service:
     TAMANHO_MAXIMO_USUARIO = 10
 
     def processa(self, database, ano, opcao, subopcao=None):
+        """Implementa a lógica de processamento das chamadas de serviço da API. Se o site da EMBRAPA estiver disponível será feito o
+        scraping, caso contrário será returnado conteúdo do cache como resposta.
         
+        Keyword arguments:
+        database -- o banco de dados da aplicação
+        ano -- o ano usado como base da request
+        opcao -- a opção que determina o tipo de dado: importação, exportação e etc...
+        subopcao -- representa a subopção entre os tipos de uvas, vinhos e etc...
+        """
+        
+        # recupera o registro correspondente no banco
         content = database.get_persisted_content(opcao, subopcao, ano)
 
+        # monta a URL para chamada no site da EMBRAPA
         if opcao == "02" or opcao == "04":
             url = f"{self.SITE_URL}&ano={ano}&opcao=opt_{opcao}"
         else:
             url = f"{self.SITE_URL}&ano={ano}&opcao=opt_{opcao}&subopcao=subopt_{subopcao}"
 
+        # caso o site esteja disponível faz o scraping
         try:
             requests.get(url)
             parser = Parser(requests.get(url))
@@ -36,12 +48,13 @@ class Service:
         
         except(AttributeError, KeyError) as e:
             return jsonify({"msg": "Serviço indisponível, tente mais tarde."}), 503
-        
+        # caso o site esteja indisponível e exista conteúdo em banco para a request solicidada, o cache será enviado como resposta
         except requests.exceptions.RequestException as e:
 
             if content:
                 return jsonify({"msg": content.content}), 226
 
+            # se não houver dados em cache e o site da EMBRAPA estiver fora do ar, retorna HTTP 503
             return jsonify({"msg": "Serviço indisponível, tente mais tarde."}), 503
                 
 
